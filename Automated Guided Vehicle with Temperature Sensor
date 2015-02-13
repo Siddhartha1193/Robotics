@@ -1,0 +1,96 @@
+#include<p89v51rd2.h>	  //this program for temperature display using LM35 sensor
+#include<adcvariable.h>
+#define rightsensor P0_0
+#define frontsensor P0_1
+#define leftsensor P0_2
+// void UART_calculations (unsigned int UART_calc_variable);
+// unsigned char UART_variable[5]={0,0,0,0,0};
+unsigned char get_data, get_decimal,get_resolution;
+int get_temp;
+void main()
+{
+//UART_Init(9600);
+//TMOD = TMOD | 0x01;
+//TH0=0x00;
+//TL0=0x00;
+//EA = 1;
+//ET0=1;
+//TR0 = 1;
+rightsensor=1;
+leftsensor=1;
+frontsensor=1;
+while(1)
+{	
+P3_6=~P3_6;
+get_data=conversion1(2);
+get_resolution= ((10 *100 )/get_data );
+get_decimal=(get_data/2.5);
+get_temp=100*get_decimal;
+//UART_calculations(get_decimal);
+if(get_decimal>=22)
+{ 
+P0_3=0;
+P2_4=0;
+P2_5=1;
+}
+else
+{
+P0_3=1;
+P2_4=1;
+P2_5=1;
+}
+if(frontsensor==1)
+{
+P2_6=1;
+P2_7=0;
+P2_2=1;
+P2_3=0;
+gendelay(30);
+P2_6=0;
+P2_7=0;
+P2_2=0;
+P2_3=1;
+gendelay(20);
+}
+else if(rightsensor==1)
+{
+P2_6=0;
+P2_7=1;
+P2_2=1;
+P2_3=1;
+//gendelay(10);
+}
+else if(leftsensor==1)
+{
+P2_6=1;
+P2_7=1;
+P2_2=0;
+P2_3=1;
+//gendelay(10);
+}
+else
+{
+P2_6=0;
+P2_7=1;
+P2_2=0;
+P2_3=1;
+}
+}
+}
+/*void UART_calculations (unsigned int UART_calc_variable)
+{
+UART_variable[0] = UART_calc_variable/10000; // For displaying the data received in any port on UART
+UART_calc_variable = UART_calc_variable%10000;
+UART_variable[1] = UART_calc_variable/1000;
+UART_calc_variable = UART_calc_variable%1000;
+UART_variable[2] = UART_calc_variable/100;
+UART_calc_variable = UART_calc_variable%100;
+UART_variable[3] = UART_calc_variable/10;
+UART_calc_variable = UART_calc_variable%10;
+UART_variable[4] = UART_calc_variable;
+UART_variable[0]=UART_variable[0]+48;
+UART_variable[1]=UART_variable[1]+48;
+UART_variable[2]=UART_variable[2]+48;
+UART_variable[3]=UART_variable[3]+48;
+UART_variable[4]=UART_variable[4]+48;
+}
